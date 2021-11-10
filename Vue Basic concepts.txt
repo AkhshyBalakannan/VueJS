@@ -1,0 +1,397 @@
+VUE JS
+
+Vue Js is an JavaScript Frontend framework model-view-viewmodel
+    Vue works on the JS and HTML page 
+
+Its used to declare things from the JS to the HTML directly using {{ }}
+
+To start using the VueJS we need to install the vue using the npm or we can use the
+CDN with the version and add it to the end of the body and before the custom script scr 
+After this we are good to go...
+
+Normally to create a VUE app we need to write in the JS file
+Declarative Rendering
+for example:
+    index.html:
+        <header>...</header>
+        <body>
+            <div id="app">
+            {{ message }}
+            </div>
+        </body>
+    
+    main.js:
+        var app = new Vue({
+            el : '#app'     // This is the linking of the vueJS and the html with ID attr
+            
+            // All the datas are send as object from here and so we create an object data 
+            
+            data : {
+                message: 'Hello Message'
+            }
+        })
+
+
+v-bind 
+        Basic working is alternative of {{ image }} in src, etc.,
+    which will create bond between data and the attribute that is to be changes
+    Dynamically binds an attribute to an expression
+    
+         
+    we also have a shorthand like v-bind:src as :src
+        :alt="description"
+        :href="url"
+        :title="tooltip"
+        :class="isActive"
+        :style="isStyled"
+        :disable="isDisabled"      // we also have the ! not equalto operations.
+
+    index.html:
+        <header>...</header>
+        <body>
+            <div id="app">
+            {{ productName }}
+            <img v-bind:src='image' alt="product-image"> // which will be like src={{ image }}
+                    // the above line is rewritten as //
+            <img :src='image' alt="product-image"> // which will be like src={{ image }}
+            </div>
+        </body>
+
+    main.js:
+        data : {
+                image : './assests/images/xyz.jpeg'
+        } 
+
+
+Directives:
+    this is normally prefixed with the v- Reactive behaviour rendered by vue 
+    these comes from the data object
+
+    conditionals in Vue
+        <span v-if="seen">You see me when true</span>
+        <span v-else="seen">You see me when false</span>
+
+        data : {
+                seen: true
+            }
+
+    We also have calculation like
+        <span v-if="inStock" > Stock available </span>
+        <span v-if="leftOut < 10 && leftOut > 0"> Few products left </span>
+        <span v-else> Sold out </span>
+
+        data : {
+                inStock: true
+                leftOut: 100
+            }
+
+
+        This if statement are like DOM manipulating stuff and so things which are freq change we need to use v-show
+        <span v-show="inStock" > Stock available </span>
+        
+            The main difference between show and if statement is the show will just use the inline css 
+            display = None, where as the if statement will completely remove it from the DOM
+
+    listing directives:
+        this is used for "for"
+
+            Simply its as same as the condition loop using the v- prefix with "for"
+
+            index.html:
+            <ul>
+            <li v-for="detail in details">{{ detail }}</li>
+            </ul> 
+            <div v-for="variant in variants" :key="variant.variantId"> // usual we need have key so that vue can keep tack of variantId
+                {{ variant.variantColor }}  // Here we can access the data using the dot notation
+            </div>
+
+            main.js:
+            
+                data : {
+                    details: ['detail1', 'detail2', 'detail3'],
+                    variants: [
+                        {
+                            variantId: 1,
+                            variantColor: "blue"
+                        },
+                        {
+                            variantId: 2,
+                            variantColor: "red"
+                        }
+                    ]
+                }
+
+
+    Event Listener: v-on || @
+        normally in Js we have the event listen which gets triggered when something happens and same here
+    
+        v-on:click="doSomething"
+
+        the v-on will be the event listener here which gets triggered when something happens
+
+        index.html:
+            <button v-on:click="cart += 1"> Add to the cart </button>
+
+        main.js:
+            data: {
+                cart: 0,
+            }
+
+// the above Event listener example is pretty simple and fairly be complex when we have a lot of functions running in realtime
+// so we are gonna write separate functions and call them
+
+         index.html:
+            <img :src="image">
+            <div v-for="variant in variants" :key="variant.variantId"> 
+                <p @mouseover="updateProductImage(variant.variantImage)"> // here we use the @ as v-on Event listener 
+                    {{ variant.variantColor }}
+                </p>
+            </div>
+
+            <button v-on:click="addToCart"> Add to the cart </button>
+
+            
+        main.js:
+            data: {
+                image: './assests/image/xyz.jpeg'
+                variants: [
+                        {
+                            variantId: 1,
+                            variantColor: "blue",
+                            image:'./assests/image/blue.jpeg'
+                        },
+                        {
+                            variantId: 2,
+                            variantColor: "red"
+                            image:'./assests/image/red.jpeg'
+                        }
+                    ]
+                cart: 0,
+            },
+            method:{
+                addToCart: function() { // this also can be written as addToCart() { this.cart += 1 } ES extra-hand
+                    this.cart += 1      // "this" keyword is used for mapping value inside the data object
+                },
+                updateProductImage(variantImage) {
+                    this.image = variantImage
+                }
+            }
+
+        We also have other event listener written as 
+            @click  @mouseover  @submit    @keyup.enter // .enter is an modifer which does the function once enter is keyupped
+
+
+
+Class & Style Binding
+        Explanation is as same as the title itself you can change the style using v-bind:style or :style 
+
+        We also can use the conditionals statement [isActive ? activeClass : '']
+                                                    true         active
+   
+    class Binding:
+        <button v-on:click="addToCart"
+                :disabled="!inStock"
+                :class="{ disabledButton: !inStock }">Add to cart</button> 
+
+// here the class attr is binded with the instock object value and which is used with ! 
+// if the the inStock is false it will return true and which will add the class name disabledButton
+
+we can Dynamically add a class name with its value in the data object from js 
+    for example:
+        HTML
+            <div class="color-box"
+                 :class= "{active:  activeClass, 'text-danger': errorClass }">...</div> // General output will be class="color-box active"
+                                                                                        // but not the errorClass
+
+        JS 
+            data: {
+                activeClass: true,
+                errorClass: false
+            }
+
+    We also can add classObject here
+            <div class="classObject">...</div>
+
+        JS
+            data: {
+                classObject:{
+                    active: true,
+                    'text-danger': false
+                }
+            }
+
+
+    Style Binding:
+
+        <div v-for:"variant in variants"
+            :key="variant.variantId"
+            :class="className"
+            :style="{ background-color: variant.variantColor }"
+            @mouseover="updateProductImage(variant.variantImage)">
+        </div>
+
+
+    We can also use an object that is to be binded to the style attribute
+
+        index.html:
+            <span :style="styleObject">..</span>
+
+        main.js:
+            data: {
+                styleObject: {
+                    color: 'red',
+                    fontSize: '13px'
+                }
+            }
+
+    from the above example you can see both the color and fontSize will be added to the span style as
+        index.html:
+            <span :style="color: red; font-size: 13px">...</span>
+
+    we can have mutli-object,
+
+        index.html:
+            <span :style="[styleObject1, styleObject2]">..</span>
+         main.js:
+            data: {
+                styleObject1: {
+                    color: 'red',
+                    fontSize: '13px'
+                },
+                styleObject2: {
+                    color: 'red',
+                    fontSize: '13px'
+                }
+            }
+
+
+
+Computed Property:
+    
+    Computed is like a function that renders an output with the data object
+    this is used where the results might be needed in many places
+
+    These results are cached and so we dont need to rerun the code everytime we use
+    This is the correct way to use than using a function.
+
+    We can have it by using an computed object
+    For example:
+
+        JS  
+            data : {
+                brand: 'apple',
+                product: 'phone'
+            }
+            computed: {
+                title() {
+                    return this.brand + ' ' + this.product
+                }
+            }
+
+----------------------------------------------------------------------------------------
+
+Components:
+
+    Components are reusable block code 
+    
+    Components can also have components within components 
+    normally components are a block of code where a page code is split into component code
+    this is used to maintain and have a clear understanding of what a particular place in webpage will
+    do and what all will rendered and how it will work this are simply a HTML content that will be 
+    sent to the DOM to be inserted
+
+
+    To Create an Component 
+
+            vue.component('product', {
+                template:` 
+                <div>
+                ...
+                </div>
+                `,
+                data() {
+                    return {    <== Returns a fresh data object for each components
+                        ...
+                    }
+                }
+                    
+            })
+
+
+    What if we have a component within component and wish to share a data message to outscope
+    But as the Scope is "this" is only compatible within the component we can use props 
+
+PROPS a custom attribute for passing data into our components
+
+        JS
+            Vue.component('product',{
+                props: [message],
+                template: `<div>{{ message }}</div>`,
+                data() { ... }
+            })
+
+        HTML    
+            <product message="Hello !"></product>
+
+    the above example is so simple and we simply get the value as message but
+    we might also need the validations on the message.. to have them we can write as
+
+
+        JS
+            Vue.component('product', {
+                props: {
+                    message: {
+                        type: String,
+                        required: true,
+                        default: "Hi"
+                    }
+                },
+                template: `<div>...</div>`,
+                data() { ... }
+            })
+
+THE ABOVE PROPS IS USED TO SEND THINGS INTO COMPONENTS 
+        WHAT IF YOU NEED THINGS FROM COMPONENTS 
+
+
+Communicating Event
+
+    To get out a data from the component to parent we can use emitter which will emit signal to 
+        parent saying something is changed or has happened.
+
+    syntax for this is using        this.$emit('didSomething')
+
+    Also here we have successfully emitted a signal but we haven't catched it in parent 
+    to catch it in the parent we can use the event listener @ or v-on attributes
+
+    For Example:
+        HTML 
+            <product :premium="premium" @add-to-cart="updateCart"></product>
+
+        JS 
+            Vue.component('product',{
+                ...
+                addToCart() {
+                    this.$emit('add-to-cart') // to send an arg $emit('add-to-cart', id)
+                }
+            })
+
+
+            var app = new Vue({
+                ...
+                data: {
+                    ...
+                    cart = 0
+                },
+                methods: {
+                    updateCart()  {     // to get the id arg we give updatecart(id)
+                        this.cart += 1
+                    }
+                }
+            })
+
+
+
+
+
+
