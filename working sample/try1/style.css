@@ -1,0 +1,31 @@
+.board{
+    margin: 50px 200px 20px 300px;
+    width: 700px;
+    height: 10px;
+    background-color: grey;
+}
+
+.staff-member{
+    width: 100px;
+    height: 100px;
+    margin-left: 800px;
+    background-color: rgb(230, 141, 25);
+}
+
+.student-member{
+    margin: 25px;
+    width: 100px;
+    height: 100px;
+    background-color: burlywood;
+    display: inline-block;
+}
+
+.students-place{
+    margin: 50px 200px 10px 200px;
+    padding: 100px;
+}
+
+.hide{
+    background-color: black;
+    color: white;
+}

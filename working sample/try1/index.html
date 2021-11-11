@@ -1,0 +1,68 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Room</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="app">
+        <div class="board"></div>
+        <div class="staff-member">{{ details }}</div>
+
+        <div class="students-place" v-for="(studentDetail, index) in students">
+            <student :studentDetail="studentDetail"></student>
+            {{ studentDetail }}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+    <script src="main.js"></script>
+</body>
+
+</html> -->
+
+<!-- -------------------------------------------------------------------------------- -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Room</title>
+    <style>
+        .hide {
+            background-color: black;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="app" style="padding: 0px 50px 0px 50px;">
+        <h1 style="color: rgb(0, 60, 255);">{{ title }}</h1>
+        <div v-if="stock">
+            <!-- <div v-show="stock"> -->
+            <div v-for="(model, index) in models">
+                <p :class="{ hide: !model.see }" :title="generateSomething">{{ model.product }}</p>
+                <a :href=" model.link" @click="printProduct(model.product)">Click me to Print</a>
+                <a :href="model.link" @mouseover="removeProduct(index)">hover me to blackout</a>
+            </div>
+        </div>
+        <div v-else>
+            <p>We are out of stock</p>
+        </div>
+    </div>
+
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script> -->
+    <script src="../vue.min.js"></script>
+    <script src="main.js"></script>
+</body>
+
+</html>

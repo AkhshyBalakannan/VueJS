@@ -168,7 +168,7 @@ Directives:
                     ]
                 cart: 0,
             },
-            method:{
+            methods:{
                 addToCart: function() { // this also can be written as addToCart() { this.cart += 1 } ES extra-hand
                     this.cart += 1      // "this" keyword is used for mapping value inside the data object
                 },
@@ -180,6 +180,8 @@ Directives:
         We also have other event listener written as 
             @click  @mouseover  @submit    @keyup.enter // .enter is an modifer which does the function once enter is keyupped
 
+
+            We also have an . (dot) @submit.prevent EVENT MODIFIER which will prevent the default working of submit
 
 
 Class & Style Binding
@@ -210,7 +212,7 @@ we can Dynamically add a class name with its value in the data object from js
             }
 
     We also can add classObject here
-            <div class="classObject">...</div>
+            <div :class="classObject">...</div>
 
         JS
             data: {
@@ -303,7 +305,7 @@ Components:
 
     To Create an Component 
 
-            vue.component('product', {
+            Vue.component('product', {
                 template:` 
                 <div>
                 ...
@@ -319,7 +321,7 @@ Components:
 
 
     What if we have a component within component and wish to share a data message to outscope
-    But as the Scope is "this" is only compatible within the component we can use props 
+    But as the Scope "this" is only compatible within the component we can use props 
 
 PROPS a custom attribute for passing data into our components
 
@@ -359,7 +361,8 @@ Communicating Event
     To get out a data from the component to parent we can use emitter which will emit signal to 
         parent saying something is changed or has happened.
 
-    syntax for this is using        this.$emit('didSomething')
+    syntax        this.$emit('didsomething') // these words should not be used with camelcase because JS will
+                                                turn all the attributes into smaller case and will be match so use smaller case words
 
     Also here we have successfully emitted a signal but we haven't catched it in parent 
     to catch it in the parent we can use the event listener @ or v-on attributes
@@ -390,8 +393,85 @@ Communicating Event
                 }
             })
 
+Form and inputs in Vue
+    This is a simple topic where we might have form that a user fills and needs to be sent 
+    to get data from the input we need something like we had v-bind 
 
+    v-bind a little recall creating a path from the js to html data transfer but this was
+    one-way but the thing we need here is the opposite or say as two-way data
 
+    So for this we have 
+                        v-model which will create two-way connections ( bound )
+
+        Component 
+            Vue.component('product-review, {
+                template:`
+                <input v-model="name"> // when ever an input is changed its automatically updated and changes in DOM everywhere
+                `,
+                data(){
+                    return{
+                        name: null,
+                    }
+                }
+            }) 
+
+    
+    We also have a modifier for these bound that is v-model. (dot type caste)
+            for example to get an integer input we give it a name v-model.number="numberValue"
+
+Form validations: // FOR EXAMPLE SEE TRY3 FILE CODE
+
+    normally when we use the HTML we can use the required attr in the input so that we can ask the user to fill it
+    But this is so common as we also should have a backend validations that should check or validate the data
+
+    to do this we simply can have it inside the submit function that is called when @submit is triggered and
+    it checks for this.field && this.field with an if statement and if any of the field is false we should have else block 
+    where the individual error should be checks and error message should be pushed in error array and can be displaced to the user
+
+    var app = new Vue({
+        el: '#app',
+        data:{
+            loginInfo = [],
+        },
+        methods:{
+            addToScreen(data){
+                this.loginInfo.push(data)
+            }
+        }
+    })
+
+    Component 
+            Vue.component('product-review, {
+                template:`
+                <input v-model="name">
+                <input v-model="password">
+                <button @submit.prevent>submit</button>
+                `,
+                data(){
+                    return{
+                        name: null,
+                        password: null,
+                        error: []
+                    }
+                },
+                methods{
+                    submitfunction(){
+                        if(this.name && this.password){
+                            let credentials = {
+                                name = this.name,
+                                password = this.password
+                            },
+                            this.name=null,
+                            this.password=null,
+                            this.$emit('credential-log',credentials)
+                        }
+                        else{
+                            if(!this.name) this.error.push('name is not filled')                      
+                            if(!this.password) this.error.push('password is not filled')                      
+                        }
+                    }
+                }
+            }) 
 
 
 
