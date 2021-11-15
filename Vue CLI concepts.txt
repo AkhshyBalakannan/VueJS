@@ -75,3 +75,255 @@ Root Components for the project lives in the app.vue because we say
             </script>
             <style>
             </style>
+
+Nesting Components
+
+    Root Components is the parent or the top level Component,
+    We may have many components and can be linked with other components or we can also have nested
+
+
+    To create a new Components we need to create an .vue file and copy paste the app.vue file content
+
+    Now We have created the component successfully, but we have not declared them anywhere
+
+Register Components
+
+    Register Globally or locally 
+    
+        Globally means we can use them any where in our project and nested easily
+
+        locally means we can use them only in the components where we registered it
+
+
+        Global Register steps:
+
+                    1. the first step is to import the component import <name> from './<file-name>.vue'
+                    2. Vue.component('<tag-name>',<name>); above the new Vue(); or say as after import 
+
+
+        Local Register steps:
+
+                    1. Go to the file where we need to register locally 
+                    2. Inside the script tag import the component import <name> from './<file-name>.vue'
+                    3. Inside the export default object create an components object and create '<tag-name>': <name>
+
+                    for Example: 
+                        <script>
+                        import <name> from './<file-name>.vue'
+
+                        export default {
+                            components: {
+                                '<tag-name>': <name>
+                            },
+                            data(){
+                                return {
+                                    ...
+                                }
+                            }
+                        }
+
+                        </script>
+
+
+Style in components:
+
+    Normally style in VueJs is same as in others, and we have already seen that every component files have their own Style tags
+    and so we can write our style in these Style tags to get implemented in the components
+
+    Here comes the difficulty that is when we style an element that is h1 or h2 or etc and if we style differently in two components 
+    once when they are nested and in page we see problems that is style being implemented commonly for all the elements 
+    
+    This is because the style is not linked with the components alone once when everything are nested all comes into same
+    and to avoid this problem we need to add an attribute to the style tag that is scoped
+
+    <style scoped> ... </style>
+
+    Adding the scoped attr in the style tag in the components file will give you extra functionality that is separate styling for
+    different components.
+
+    This is achieved using an unique attr getting added to each components 
+    The styles are targetted with the attributed embedded with the unique attr
+
+    component #1
+        <style scoped>
+        h1{
+            color: red;
+        }
+        </style> 
+    
+    component #2
+        <style scoped>
+        h1{
+            color: green;
+        }
+        </style> 
+
+    In browser we can see that these styles will look like,
+
+        component #1
+            h1[29-dhj2-fd]{
+                color: red;
+            }
+
+        component #2
+            h1[32-dfh3-ds]{
+                color: green;
+            }
+    
+    So this way no Two components will have the same element selected in the style thus resulting in different results,
+
+
+Props in CLI:
+
+    Props as we already know what its used for, anyhow its used to transfer data from the parent to the child components
+    Here the procedure is the same, declaring it in the props objects and calling them as an attribute in the components tag
+
+    example:
+
+    child Component:
+        export default{
+            props: ['<data-name>'],
+            data(){
+                return {
+                    ...
+                }
+            }
+        }
+
+    Parent Component:
+
+        <component v-bind:<data-name>="<actual-data>"> </component>
+
+
+    The above code will work completely fine and thats not a problem, BUT we may also need validations,
+    The same procedure has to be followed here the only difference is that we need to give it as object and not as array
+
+     child Component:
+        export default{
+        props: {
+            <data-name>: {
+                type: <data-type>,
+                required: true
+            }
+        }
+        data(){
+                return {
+                    ...
+                }
+            }
+        },
+
+
+Primitive and Reference:
+
+    Primitive types are String , Boolean, Number
+
+    Reference type are Array, objects
+
+    While we pass reference to the components its actually the reference and not a copy and if we edit in components it will edit 
+    everyWhere and say as the root value of the data we passed as reference
+
+    While we pass primitive to the components its will only edit the local copy of the data and not edit in the original place.
+    Like it will create a copy and edit the data
+
+
+
+Events:
+    Events are the exact opposite of the props and event is something like which we wait for the action to happen or like comes
+    from the child to the parent. like using the v-on:<event-name>.
+
+    This is done using the $emit method and catch them in the parent using the v-on 
+
+    child Component:
+        <script>
+        export default{
+            data(){
+                return {
+
+                }
+            },
+            methods:{
+                doSomeThing(){
+                    this.$emit('callDoSomething', '<message>');
+                }
+            }
+        }
+        </script>
+
+        parent Component:
+            <template>
+            <tag-name v-on:callDoSomething='functionCall($event)'></tag-name>
+            </template>
+
+            <script>
+            export default{
+                    data(){
+                        return {
+
+                        }
+                    },
+                    methods:{
+                        functionCall(arg){
+                            console.log("Called me from the child component", arg);
+                        }
+                    }
+                }
+            </script>
+
+
+Event Bus:
+    Event Bus is just an Vue Instance which can listen to event and emit and react to the events.
+
+    To create an Event Bus we need to do it in the root component so that we can use it in all the components (main.js)
+
+        const bus = new Vue(); // this is how you declare or create an Event Bus in main.js
+
+        after this we need to call this event bus in other components to do so we need to import it in other files,
+        inside the <script></script>
+
+            we need to import them as 
+                import { bus } from '../main';
+
+        Thats all we declared the Event Bus in the main.js that is the root component and we have imported it in other components,
+
+
+        To emit to the Event Bus:
+
+            child Component 1:
+                <script>
+                export default{
+                    data(){
+                        return {
+
+                        }
+                    },
+                    methods:{
+                        doSomeThing(){
+                            bus.$emit('callDoSomething', '<message>');
+                        }
+                    }
+                }
+                </script>
+
+
+        To listen to the Event Bus we need to know about Life Cycle Hooks 
+
+            Here we will first use created life cycle hook and check how it works
+            // this created life cycle hook will be fired when event bus is created and will be listening to it
+
+            child Component 2:
+                <script>
+                export default{
+                    data(){
+                        return {
+
+                        }
+                    },
+                    creates(){          // this created life cycle hook will be fired when event bus is created and will be listening to it
+                        bus.$on('callDoSomething', (arg)=>{
+                            ...
+                        })
+                    }
+                }
+                </script>
+
