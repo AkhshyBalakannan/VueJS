@@ -473,5 +473,64 @@ Form validations: // FOR EXAMPLE SEE TRY3 FILE CODE
                 }
             }) 
 
+Reference vue data $refs:
 
+    we have an attribute in the HTML which is ref="name"
+
+    HTML    
+        <input type="text" ref="name" />
+
+    VueJS
+        var app = new Vue({
+            data:{
+
+            },
+            methods: {
+                readRefs(){
+                    console.log(this.$refs) // which will return us an object 
+                                            // if you open you can see all kind of values of the html element
+                }
+            }
+        })
+
+    Even we can reference to a div or any sort of elements with the attribute ref for
+    example we can set a div with ref name and can call it inside the Vue instance with
+    this.$refs.{name}.{key} to get the value of particular value of particular element
+
+    HTML    
+        <div ref="test">Hello</div>
+
+    VueJS
+        var app = new Vue({
+            data:{
+
+            },
+            methods: {
+                readRefs(){
+                    console.log(this.$refs.test.innerHTML) 
+                }
+            }
+        })
+
+Global Channel:
+
+    This global channel thing is used when we need the data to be transfered 
+    from the grandchild to parent or in many other places to use this Global bus 
+
+    We need to create a new vue instance and use it as bus 
+
+        var eventbus = new Vue()
+
+    thats all we have set an event bus which we can use it as bus 
+    and the emitting data is the same as we do for the parent, the only difference is
+    
+        eventBus.$emit('function-name', payload)
+
+    Next step is add mounted property which is one of the lifecycle hokes of VueJS
+    this is piece of code which will run as soon as the component is mounted to DOM
+        mounted() {
+            eventBus.$on('function-name', payload => {
+                <!-- Body of function -->
+            })
+        }
 

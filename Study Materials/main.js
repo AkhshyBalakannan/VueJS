@@ -1,3 +1,5 @@
+var eventBus = new Vue()
+
 Vue.component('product', {
     props: {
         premium: {
@@ -38,7 +40,9 @@ Vue.component('product', {
             </button>
   
          </div>  
-      
+         <div>
+         <product-review @review-submitted="addReview"></product-review>
+    </div>
       </div>
      `,
     data() {
@@ -86,6 +90,48 @@ Vue.component('product', {
                 return "Free"
             }
             return 2.99
+        }
+    }
+})
+
+Vue.component('product-tabs', {
+    props: {
+        reviews: {
+            type: Array,
+            required: false
+        }
+    },
+    template: `
+    <div>
+          
+    <div>
+      <span class="tab" 
+            v-for="(tab, index) in tabs"
+            @click="selectedTab = index"
+      >{{ tab }}</span>
+    </div>
+    
+    <div v-show="selectedTab === 'Review'"> // displays when "Reviews" is clicked
+        <p v-if="!reviews.length">There are no reviews yet.</p>
+        <ul>
+            <li v-for="review in reviews">
+              <p>{{ review.name }}</p>
+              <p>Rating:{{ review.rating }}</p>
+              <p>{{ review.review }}</p>
+            </li>
+        </ul>
+    </div>
+    
+    <div v-show="selectedTab === 'Make a Review'"> // displays when "Make a Review" is clicked
+      <product-review @review-submitted="addReview"></product-review>        
+    </div>
+
+  </div>
+`,
+    data() {
+        return {
+            tabs: ['Reviews', 'Make a Review'],
+            selectedTab: 'Reviews'  // set from @click
         }
     }
 })

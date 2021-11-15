@@ -1,0 +1,77 @@
+
+Vue CLI is command Line Interface
+
+VueJs is an front-end framework which can be installed and which will make our works easy for us,
+compile everything on our machine, not in a browser, live reload dev server
+This VueJs will split the components and App.vue adn all the src and assest files will be pregenerated 
+
+To create an VueJs CLI 
+
+Pre-requested Node  
+    to check the node   cmd -  node -v
+
+    Install Vue CLI goto the github repo and copy the install cmd
+
+        npm i -g vue-cli 
+        // this will install cli globally in your machine
+
+        To start using the cli we need to init using the cmd
+            vue init <template name> <project name>
+
+            example : vue init webpack my-project
+
+    This will create an file where all the vue JS files and node modules files will be present 
+    once we install we need to cd to the dir and give npm install to install all the dependencies in nodemodules
+
+    After these steps we are ready to run the vueJs file using the cmd  
+
+        npm run dev
+            // this will run in local host in the browser
+
+
+Files Tree :
+
+in the files which we have created will give as set of files
+
+    node_modules
+    src
+    index.html      // this is main or say as the root file from which browser loads to display
+    .gitignore
+    package.json
+    webpack.config.js
+
+
+    SRC File:
+        this source folder is the second main folder where all our code lives and which will be sent to the index.html  
+        for the rendering in the browser.
+
+            Here we can see
+                            assest
+                            app.vue
+                            main.js
+
+
+In the main.js we can have all features of ES6 in the JavaScript such as import, short hand for functions and etc,.
+
+Root Components for the project lives in the app.vue because we say 
+        import App from './app.vue'
+        render:h=>h(App)
+
+
+
+        Basically a Vue file is simply a components file and it contains all the components code with template
+
+            <template>
+            </template>
+            <script>
+            export default {
+                name: 'app', // name of the component when we have many this becomes handy
+                data(){
+                    return {
+                        msg:"Hello world"
+                    }
+                }
+            }
+            </script>
+            <style>
+            </style>
