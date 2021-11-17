@@ -327,3 +327,377 @@ Event Bus:
                 }
                 </script>
 
+Life Cycle Hooks:
+
+    This life cycle hooks are nothing but the function which are fired at some certain time of the vue execution,
+
+    There are many function called as life cycle hook and the help it provides us is in the particular time of execution 
+    er can add some lines of code which we want the vue to run it at that particular point of time
+
+    Life Cycle Hooks:
+        beforeCreate()  // before the observe Data being checked
+        created()   // after the data and init Events are fired 
+
+        beforeMount()   // before mounting in the DOM  that is the el id template getting mounted
+        mounted()   // after mounting in the DOM 
+
+        beforeUpdate()  // after mounted we can update the component or instance this beforeUpdate is fired
+        updated()   // After the update is done this is fired
+
+        beforeDestroy() // destroy or cleanup any components or instance 
+        destroyed() // final Clean up after getting destroyed
+
+    
+Slots :
+
+    In the above notes you would have seen that we can send datas using props snding templat using props is not a good idea 
+
+    and so we can send templates using Slot
+
+    these are used to send templates itself to the child and naming them helps vue to know where to embed them in the child component
+
+    so we use the slot tagname in the child component and in parent we type inbetween the custom component tag name 
+    and we need to name them using the slot and accessing the slot with name in the child component will help 
+
+
+    Parent Component:
+        <component-tag-name>
+                <h1 slot="heading">Heading</h1>       
+                <h1 slot="body">Body</h1>       
+                <h1 slot="footer">Footer</h1>       
+        </component-tag-name>
+
+    Child Component:
+        <template>
+        <div>
+            <slot name="heading"></slot>
+            <h1> I am Title </h1>
+            <slot name="body"></slot>
+            <slot name="footer"></slot>
+        </div>
+        </template>
+
+    
+    Once when we need some data to be dynamic data and that template which will be send to the child component make sure the data is 
+    in the parent itself because it will not check the value inside the child components
+
+
+Dynamic Compoenents:
+
+    The concept here is to have an dynamic component which is to be rendered in the screen that is not by using the show or v-if 
+    complete new creation of component with dynamic behaviour of the user 
+
+    If we use the component-tag-name we wont be able to use this Dynamic behaviour and so use this Dynamic behaviour we need to 
+    use an another VUE JS tag called as <component></component>
+
+    Old Way of using components:
+        <component-tag-name></component-tag-name>
+
+    New Dynamic way of using components:
+        <component is="<component-tag-name>"></component>
+
+    By the above example you must have understood that the component tag is more like common tag with same name but the only difference
+    is that it has the "is" attribute and this "is" attribute will tell which component to be rendered in the place of component tag
+
+    We can have this "is" attribute to be v-bind and so that when ever we change any value to the data we can change the component that 
+    is rendered.
+
+        <component v-bind:is="component"></component>
+
+        data(){
+            return {
+                component: "<component-tag-name>"
+            }
+        }
+
+
+Input Binding:
+
+    This is the same old concpet which we saw in the basic concepts, where we can have a dynamic data property which will store data
+    when ever a user changes data in the input field and this functionality is achieved by adding the attribute v-model
+
+
+    // Main Thing here which we need to see is that we have a modifer for these attr and for v-model we have .lazy thing
+
+
+    This .lazy is used when we need some data to be previewed in the browser but not change as soon as the user inputs even a letter 
+    and should update that data only once after the user has completed the input and focus away we give .lazy
+
+
+    <input type="text" v-model.lazy="message">
+
+    <p>{{ message }}</p> // here the data message will only get updated when the user is focus out of the particular input field
+
+
+Checkbox Binding:
+
+        Here also the concepts of saving the data is same just as we did in the input binding using the v-model,
+
+        The difference between an input binding and a checkbox binding is that check box may have multiple values to be added,
+        and so we need to create an array object in the data object,
+
+        And while we we bind that with the property in the data object we need to v-model them all with the same property and so
+        All other things will be taken care by the VueJS 
+
+            <label for="capabc">ABC</label>
+            <input type="checkbox" id="capabc" v-model="types">
+
+            <label for="num">123</label>
+            <input type="checkbox" id="num" v-model="types">
+
+            <label for="specialchar">!@#</label>
+            <input type="checkbox" id="specialchar" v-model="types">
+
+            <label for="smallabc">abc</label>
+            <input type="checkbox" id="smallabc" v-model="types">
+
+            <script>
+            export default{
+                data(){
+                    return {
+                        types: []
+                    }
+                }
+            }
+            </script>
+
+        The above example is the working of checkbox binding.
+
+
+Select box Binding:
+
+        Here also the concepts of saving the data is same just as we did in the input binding using the v-model,
+
+        Simple concepts of the selectbox is that we may have multiple options and and once when we select any option this will get
+        selected and sent to the select tag and this select tag will only hold the value as the input and thats why we need to add
+        the v-model to the select tag and not to the option
+
+        By adding this v-model to the select tag we can restict the user to select only one value from the below options field
+
+        <select v-model="selected">
+            <option v-for="option in options">{{ option }}</option>
+        </select>
+
+        data(){
+            return {
+                selected ="",
+                option=["option 1", "option 2","option 3","option 4"]
+            }
+        }
+
+        Here main give a away is that we need to give v-model to the select tag.
+
+
+Custom Directives:
+
+    Directives are the things which we have already used a lot those are the v- things which we write as ":" things
+
+    For example we have used the v-for v-on v-if v-model all these are the directives 
+    Say as we need a custom directive which will work for our convenients this is so Simple
+
+    To declare an Custom Directive we need to type in the main.js file 
+    we have three main arg that is to be given inside the bind life cycle hook, those are the el for elements 
+    binding for the bind value, etc., vnode for the virtual node for back-end process 
+    
+    the below example explains how we can modify or change the elements on which this directive is applied
+
+        main.js
+            Vue.directive('<custom-directive-name>', {
+                bind(el, binding, vnode){ // this is bind life cycle hook // vnode is virtual node // el element
+                    el.style.color = "#"+ Math.random.toString().slice(2,8);
+                }
+            })
+
+    the below example explains how we can modify or change the value of the element on which directive is applied
+
+        main.js
+            Vue.directive('theme',{
+                bind(el, binding, vnode){
+                    console.log(binding.value) // by this we can get the value of the element where the directive is used 
+                }
+            })
+
+    The below code is something imp which is you will find the wide inside the template being surrounded by two " , '.
+        This is because in this example we are sending an string not an object to let VUE know its String we 
+        need to give in spec that its String. We can also send Objects or Array to the directive. 
+        example code :
+            <template>
+                <div v-theme=" 'wide' ">...</div>
+            </template>
+
+             main.js
+                Vue.directive('theme',{
+                    bind(el, binding, vnode){
+                        if (binding.value == 'wide'){
+                            el.style.maxWidth= "1200px";
+                        }
+                        console.log("To get the arg", binding.arg )
+                    }
+                })
+            
+    Arguments in the directives are those which comes after the : that is v-on:click="<function-name>"
+            click = Argument            <function-name> = Value  
+
+           
+Filters :
+
+    What is filter, these filters are used to change the value dynamic data appear on the browser this will affect the original
+    data, but will affect the viewing in browser where ever we use the filter with the dynamic data 
+
+    To use filter we need to give an pipe line and then add the name of the filter 
+    there is no Default filter by VUEJS
+    For example :
+
+        <template>
+            <div>{{ data | to-uppercase }}</div> // to-uppercase is the filter name,  | is tell Vue this is filter
+        </template>
+
+        main.js:
+
+            Vue.filter('to-uppercase', function(value){
+                return value.toUpperCase();
+            });
+
+    Custom Search Filter:
+
+        Here we may always need a search which will search the data in the page and return us the searched data
+        So we can do this with the filter for this we will take blog example and do it 
+
+
+            <template>
+                <input type="text" v-model="search" />
+                <ul>
+                <li v-for="data in datas | search "> {{ data }}</li> // DONT DO THIS VUEJS DOESN'T WANT YOU TO DO THIS WAY PERFORMANCE ISSUES
+                </ul>
+            </template>
+
+        for that we need to create a computed property and achieve this behaviour,
+
+                <template>
+                <input type="text" v-model="search" />
+                <ul>
+                <li v-for="data in filterdatas "> {{ data }}</li>
+                </ul>
+            </template>
+
+            export default {
+                data(){
+                    return{
+                        search:''
+                    }
+                },
+                computed:{
+                    filterdatas: function(){
+                        return this.datas.filter((data)=>{
+                            return data.match(this.search)
+                        })
+                    }
+                }
+            }
+
+        What is happening here is that we are creating an computed property for the searched results and thus this is being rendered in DOM
+        and so we have good performance by doing this computed way than using the filter version for the search functionality
+
+
+Registering Directives and Filters Locally:
+
+    From the above concepts you would have understood how to use custom directives and Filters. how to declare them in the main.js 
+    that is declaring them Globally to use any where in the project. But what if you needed some filter or directive which you only
+    want in some components and so you need them to be registered locally we can do it here...
+
+
+        <script>
+            export default {
+                data (){
+                    return {
+
+                    }
+                },
+                methods:{
+
+                },
+                created(){
+
+                },
+                computed:{
+
+                },
+                filters:{ // Here the value will be function or you can use ES6 short Hand
+                    'to-uppercase': function(value){
+                        return value.toUpperCase();
+                    }
+                    // we can also write above code block as below
+                    toUppercase(value){ // here you can see the - is removed and second word first letter is capitalized 
+                        return value.toUpperCase();
+                    }
+                },
+                directives:{ // Here the value will be object type 
+                    '<name>':{
+                        bind(el, binding, vnode){
+                            el.style.color = "red";
+                        }
+                    }
+                }
+            }
+        </script>
+
+    The above examplee is for registering the filters and directives locally and this is done in the component file where we 
+    may need the filters and directives to behave differently. 
+
+
+HTTP REQUEST :
+
+    This HTTP request are worked using an node package which is recommand by VUE itself and this node package is called as vue-resource 
+
+
+    To Install vue-resource we need to give
+
+        npm install vue-resource --save // this will install and add in the dependencies file 
+
+    Steps to work with vue-resource 
+
+        1. First we need to import the vue-resource in the main.js file to use the plugin 
+                        import VueResource from 'vue-resource'
+
+        2. Register or tell Vue to use this to do so we give    
+                        Vue.use(VueResource);
+
+        3. After registering it we can use it as how we would use an emit function but this is an promise
+
+            // this example is the GET method
+
+                Usually this GET method are trigger when the page loads and so we have used in the 
+                created life cycle hooks you may also consider keeping it in some method and trigger the function
+
+                        <script>
+                            export default {
+                                data (){
+                                    return {
+                                        blogs = []
+                                    }
+                                },
+                            created(){
+                                this.$http.get('<url>').then(function(data){
+                                    console.log(data);
+                                    this.blogs = data.body;
+                                    })
+                                }
+                            }
+                        </script>
+
+            // this example is the POST method
+
+                Usually this POST, PATCH request are made using a function call and thats why its inside methods 
+                here the method name is post
+            
+                        methods:{
+                            post:function(){
+                                this.$http.post('<url>',{
+                                    < data to be sent as object >
+                                }).then(function(data){
+                                    console.log(data); // return data like conformation on success
+                                });
+                            }
+                        }
+
+        4. Link of vue-resource https://github.com/pagekit/vue-resource 
