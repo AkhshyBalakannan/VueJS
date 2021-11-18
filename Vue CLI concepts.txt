@@ -701,3 +701,218 @@ HTTP REQUEST :
                         }
 
         4. Link of vue-resource https://github.com/pagekit/vue-resource 
+
+
+Mixins: 
+    Block of code where we can use this in many different place to achieve DRY concept
+
+    Here in our notes we have already did it that is the computed popertie searchBlog,
+    which was in two different components but what we did was we copy pasted computed function in both
+
+    But we have a better way to do this That is using the mixins and which can be used any where you need
+    inside the project .
+
+    Steps to use the Mixin:
+
+        1. We are going to create a separate Js file 
+        2. from here we will export an object and inside the object we will have computed key
+        3. all the things inside this object is same as how we declare an computed property Normally
+
+        <name>mixin.js:
+            export default {
+                computed:{
+                    <computed-name>:function(){
+                        < function body code >
+                    }
+                }
+            }
+
+        4. Okay now we have created the mixin separate file and its ready to be used
+        5. Now where ever we need the mixin code we need to import it inside script tag
+                import <mixin_name> from ./mixins/<name>mixin
+
+        6. After Importing the mixin we need to declare it down in the export default object 
+            of the particular component your in 
+
+                export default{
+                    data(){
+                        return{ ... }
+                    },
+                    mixins:[<mixin_name>]
+                }
+
+
+Setting Up Routes :
+
+    VUEJS natively doesn't provide us with the functionality of routing and so we need to use a 
+    npm package which is called as vue-router to start using it we need to install it.
+
+        1. install vue-router 
+            npm install vue-router --save
+
+        2. Import the vue-router in the main.js 
+        3. Tell vuejs to use it by giving 
+                import VueRouter fom 'vue-router'
+
+                Vue.use(VueRouter);
+            
+        4. To set up this Routes we need to create new instance of the Router 
+
+                const router = new VueRouter({
+                    // routes : [<registering routes>] // {path:'', component:<component>}
+                });
+                but we are not going to do it this way because of step 5
+        5. Inside this we need to register the routes but best practice is to keep it separate
+        6. Create new JS file named routes.js and export default with the routes 
+
+                export default[
+                    {path:'/',component: <components>}
+                ]
+        7. To use the components we need to import the components and give the name of components
+        8. Now we need to import the routes to the main.js so add them in the routes instance 
+                import Routes from './routes'
+
+                const router = new Router({
+                    routes : Routes
+                })
+        
+        9. the last step is to tell Vue to use the route instance in our project by adding it inside 
+            vue instance of the project as router: router 
+
+                new Vue({
+                    el:'#app',
+                    render: h=>h(app),
+                    router:router
+                })
+
+        Also We have an advantage over here so now we dont need to use static components in the app.vue 
+        we can use the routes to dynamically add the component name to the root component 
+
+        We also have tag which makes this process easy and handy that is <router-view>
+
+                <router-view></router-view>     // will dynamically change as per routings 
+
+Hash and History:
+
+    What is Hash, Normally you would come accross the single page website where the nav bar will take
+    you to some section in the same place that is not requesting the server for each routes 
+
+    This method is defaultly used by the VueJS 
+    You can see url when we start using the VueJS routes showing 
+        
+            localhost:8080/#/<route-name>
+
+    If we need the history mode that is to request the server each time we change the routes
+    we can change this behaviour by changing it in the router instance with key "mode" value "history"
+
+            const router = new VueRouter({
+                routes: Routes,
+                mode: 'history' // default mode : 'hash'
+            })
+
+    By this we can change this hashing behaviour of vue    
+
+
+Router Link :
+
+    Usually in every website you will find that we will have an nav bar which will take us to 
+    different routes in that website, for this we have Anchor tag which we will use for navbars
+
+    But in VueJS we have tag name called as router-link
+
+            <router-link to="/">home<router-link>
+            <router-link to="/add">add<router-link>
+
+    Why we use this is because we get extra functionality like class name being added for stylings
+
+            class = 'router-link-active router-link-exact-active'
+
+        // These two class names are automatically added by vue router-link-active is 
+        added when the url has atleast the part of path like 
+            
+                localhost:8080/add 
+                the above url will give home anchor tag router-link-active class 
+                                        add anchor tag with router-link-exact-active class name 
+
+    If we see in the browser we can see that as anchor tag only but from vue point its router-links
+
+    We also have an attribute exact to change the class name and to be given to only the exact match url
+
+        <router-link to="/add" exact>add</router-link>
+
+
+Route Params :
+
+    You would have already known what are params and how helpfull they can be,
+
+    Params are the part of url where they are dynamic values presenting the data in browser 
+
+    To get this params from the url we can give in the place where we declare the route links 
+    that is in the routes.js file with in the path key the value can contain the name of params with :<>
+
+    this ":" will indicate VUEJS that this key after ":" will be dynamic and developer uses in backend code
+
+    To get the route parameter in the script in components we simply need to type 
+
+            this.$route.params.<param-name>
+
+            <script>
+            export default{
+                data(){
+                    return {
+                        id : this.$route.params.id
+                    }
+                },
+                created(){
+                    this.$http.get('<url>'+this.id).then((data){
+                        console.log(data)
+                    })
+                }
+            }
+            <script>
+
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+
+DATABASE CONCEPTS: 
+
+Here we will be using Google firebase console this is not linked with vueJS but for development we can test with it.
+
+    1. Here to use an GFC google firebase console we need to create an account 
+    2. Goto the database nav and create an project and you will get the url to the particular database
+    3. Goto the rules and change it as per your need and for development you can give true for both read and write keys 
+    4. Copy the url and add it to the VUEJS so that we can go to the particular url and store datas 
+
+
+    Once all the set-up is made the story for using it same as how we did for the HTTP concept 
+
+    methods:{
+        post:function(){
+            this.$http.post('<url>/<data-name>.json', {}).then((data){ // .json given because GFC uses JSON file saving NO-SQL database 
+                console.log(data)
+            })   
+        }
+    }
+
+    // The above step even if the firebase doesnt have an data-name it will create and if present it will add data to it 
+
+    Here the ID is not integer, it uses some string as the ID 
+
+    to get this ID we can use some simple method that is below 
+
+        creates(){
+            this.$http.get('<url>').then((data){
+                return data.json(); // this is function where the data is converted to proper json format
+            }).then(function(data){
+                var arr = [];
+                for (let id in data){
+                    console.log(id)    // this will give you all the id present in the FGC 
+                    console.log(data[id])    // this will give data one by one 
+                    data[key].id = id  // adding new id value pairs that is "id" key and "id" value
+                    arr.push(data[id]) // this step is made so we have new arr with data from GFC and "id" key added now 
+                }
+                this.<data> = arr;
+            })
+        }
+

@@ -22,6 +22,8 @@
 </template>
 
 <script>
+import Uppercase from "../mixin/uppercase";
+
 export default {
   data() {
     return {
@@ -45,6 +47,7 @@ export default {
         });
     },
   },
+  mixins: [Uppercase],
 };
 </script>
 
