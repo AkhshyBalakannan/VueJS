@@ -1,0 +1,418 @@
+CODE EXAMPLE FOR THIS IS VUEX SAMPLE CODE FOLDER PLEASE REFER IF NEEDED
+
+
+VUEX -  SINGLE SOURCE OF TRUTH
+
+    This documentation need some prerequisite such as knowning VUEJS 
+
+    Normally when you use VueJS you would have come accross the props and events which we use to send datas to child and parent components
+    but when you try to edit them you get an prob saying that you need to have a computed property to do so and even when you use them 
+    as they recommand we still have a problem here 
+
+    When a data from the Root components are shared by multiple components we need to send them as props while we have deeper nested components
+    the task becomes difficult and so we have a solution
+
+    VueX is an library which can be used as storage place where we can have all the data which we use in all most in all components
+
+    A LIBRARY / STATE MANAGEMENT PATTERN FOR USE WITH VUEJS 
+
+    ALLOWS US TO CREATE A CENTRALIZED DATA STORE WHICH CAN BE ACCESSED BY ALL OTHER COMPONENTS IN AN APP 
+
+    Things we have in this vuex are the getters and mutations  
+
+
+
+H-SETTING_UP_CENTRAL_STORE:
+    
+    Step 1: Install Vuex because its an library out of vueJS 
+
+            npm install vuex --save 
+
+    Step 2: Create a folder named store and create an file named store.js 
+
+            store/store.js 
+
+    Step 3: Import and basic lines which are below copy paste it 
+
+            import Vue from 'vue';
+            import Vuex from 'vuex';
+
+            Vue.use(Vuex)       // telling vue to use vuex 
+
+            export const store = new Vuex.Store({   // its similar to the return default which will be in components script
+                state: {
+                    // data section
+                    product: [ ... ]
+                }
+            })
+
+    Step 4: Tell the vue to use the state and other things which we keep inside that file we do this by adding it in main.js 
+
+        main.js:
+            ...
+            import { store } from './store/store'
+
+            new Vue({
+                store:store,
+                el:'#app',
+                render: h => h<App>
+            })
+
+    Step 5: The final step is importing the store in the components where ever we need the data 
+                BUT GETTING THE DATA MUST NOT BE INSIDE THE DATA WHERE AS WE NEED TO USE COMPUTED PROPERTY
+
+            
+        component1.vue:
+            <template>
+                <ul>
+                    <li v-for:"product in products">{{ product }}</li>  // here the product is computed property from the state 
+                </ul>
+            </template>
+
+            <script>
+                export default {
+                    computed: {
+                        products(){
+                            return this.$store.state.products
+                        }
+                    }
+                }
+            </script>
+
+
+H_GETTERS:
+
+    Sometimes we may need to compute derived state based on store state, for example filtering through a list of items and counting them:
+
+        computed: {
+        doneTodosCount () {
+            return this.$store.state.todos.filter(todo => todo.done).length
+        }
+        }
+        
+    If more than one component needs to make use of this, we have to either duplicate the function, or 
+    extract it into a shared helper and import it in multiple places - both are less than ideal.
+
+    Vuex allows us to define "getters" in the store. You can think of them as computed properties for stores. 
+    Like computed properties, a getter's result is cached based on its dependencies, and will only re-evaluate 
+    when some of its dependencies have changed.
+
+        store.js:
+
+            export const store = new Vuex.Store({   // its similar to the return default which will be in components script
+                state: {
+                    // data section
+                    product: [ ... ]
+                },
+                getters:{           // this getters is an object where multiple getter function can be written 
+
+                    saleProduct: state => {                             // this takes in state args as the first args 
+                        var saleProduct = state.products.map( product => {
+                            return {
+                                name = "**"+product.name+"**"
+                            }
+                        });
+                        return saleProduct
+                    }
+                }
+            })
+
+
+        component1.vue:
+
+            <script>
+                export default {
+                    computed: {
+                        products(){
+                            return this.$store.state.products
+                        },
+                        saleProduct(){  // As you can see this updated or edited version of store data which we can use in multi components
+                            return this.$store.getters.saleProduct
+                        }
+                    }
+                }
+            </script>
+
+
+H_MUTATIONS:
+
+    The basic idea or methods we will be using is by function directly editing store data from the individual component 
+    but when the project becomes bigger we will be losing track of which and where he function is trying or changing the store data 
+    even in vuejs debug extension we cannot find and so the proper way of using it will be this mutations 
+
+    The only way to actually change state in a Vuex store is by committing a mutation. 
+    Vuex mutations are very similar to events: each mutation has a string type and a handler. 
+    The handler function is where we perform actual state modifications, and it will receive the state as the first argument:
+
+        store.js:
+            const store = new Vuex.Store({
+            state: {
+                count: 1
+            },
+            mutations: {
+                increment (state) {
+                // mutate state
+                state.count++
+                }
+            }
+            })
+
+    You cannot directly call a mutation handler. 
+    Think of it more like event registration: "When a mutation with type increment is triggered, call this handler." 
+    To invoke a mutation handler, you need to call store.commit with its type:
+
+        component.vue
+            store.commit('increment')
+
+    Commit with Payload
+        You can pass an additional argument to store.commit, which is called the payload for the mutation:
+
+        // ...
+            mutations: {
+            increment (state, n) {
+                state.count += n
+            }
+            }
+            store.commit('increment', 10)
+        
+        In most cases, the payload should be an object so that it can contain multiple fields, 
+        and the recorded mutation will also be more descriptive:
+
+            // ...
+            mutations: {
+            increment (state, payload) {
+                state.count += payload.amount
+            }
+            }
+            store.commit('increment', {
+            amount: 10
+            })
+
+    Object-Style Commit
+        
+        An alternative way to commit a mutation is by directly using an object that has a type property:
+
+            store.commit({
+            type: 'increment',
+            amount: 10
+            })
+
+        When using object-style commit, the entire object will be passed as the payload to mutation handlers, 
+        so the handler remains the same:
+
+            mutations: {
+            increment (state, payload) {
+                state.count += payload.amount
+            }
+            }
+
+
+
+    Mutations Must Be Synchronous
+        One important rule to remember is that mutation handler functions must be synchronous. Why? Consider the following example:
+
+            mutations: {
+            someMutation (state) {
+                api.callAsyncMethod(() => {
+                state.count++
+                })
+            }
+            }
+
+        Now imagine we are debugging the app and looking at the devtool's mutation logs. 
+        For every mutation logged, the devtool will need to capture a "before" and "after" snapshot of the state. 
+        However, the asynchronous callback inside the example mutation above makes that impossible: the callback is not called yet 
+        when the mutation is committed, and there's no way for the devtool to know when the callback will actually 
+        be called - any state mutation performed in the callback is essentially un-trackable!
+
+
+H_ACTIONS:
+
+    Actions are similar to mutations, the differences being that:
+
+    Instead of mutating the state, actions commit mutations.
+    Actions can contain arbitrary asynchronous operations.
+    Let's register a simple action:
+
+        const store = new Vuex.Store({
+        state: {
+            count: 0
+        },
+        mutations: {
+            increment (state) {
+            state.count++
+            }
+        },
+        actions: {
+            increment (context) {
+            context.commit('increment')
+            }
+        }
+        })
+    Action handlers receive a context object which exposes the same set of methods/properties on the store instance, 
+    so you can call context.commit to commit a mutation, or access the state and getters via context.state and context.getters. 
+    We can even call other actions with context.dispatch. We will see why this context object is not the store instance itself 
+    when we introduce Modules later.
+
+    In practice, we often use ES2015 argument destructuring (opens new window)to simplify the code a bit 
+    (especially when we need to call commit multiple times):
+
+        actions: {
+        increment ({ commit }) {
+            commit('increment')
+        }
+        }
+
+    #Dispatching Actions
+        Actions are triggered with the store.dispatch method:
+
+        store.dispatch('increment')
+        This may look silly at first sight: if we want to increment the count, 
+        why don't we just call store.commit('increment') directly? Remember that mutations have to be synchronous. 
+        Actions don't. We can perform asynchronous operations inside an action:
+
+            actions: {
+            incrementAsync ({ commit }) {
+                setTimeout(() => {
+                commit('increment')
+                }, 1000)
+            }
+            }
+
+        Actions support the same payload format and object-style dispatch:
+
+            // dispatch with a payload
+            store.dispatch('incrementAsync', {
+            amount: 10
+            })
+
+            // dispatch with an object
+            store.dispatch({
+            type: 'incrementAsync',
+            amount: 10
+            })
+        A more practical example of real-world actions would be an action to checkout a shopping cart, 
+        which involves calling an async API and committing multiple mutations:
+
+            actions: {
+            checkout ({ commit, state }, products) {
+                // save the items currently in the cart
+                const savedCartItems = [...state.cart.added]
+                // send out checkout request, and optimistically
+                // clear the cart
+                commit(types.CHECKOUT_REQUEST)
+                // the shop API accepts a success callback and a failure callback
+                shop.buyProducts(
+                products,
+                // handle success
+                () => commit(types.CHECKOUT_SUCCESS),
+                // handle failure
+                () => commit(types.CHECKOUT_FAILURE, savedCartItems)
+                )
+            }
+            }
+
+        Note we are performing a flow of asynchronous operations, and recording the side effects (state mutations) of the 
+        action by committing them.
+
+    Composing Actions
+        Actions are often asynchronous, so how do we know when an action is done? 
+        And more importantly, how can we compose multiple actions together to handle more complex async flows?
+
+        The first thing to know is that store.dispatch can handle Promise returned by the triggered action handler and 
+        it also returns Promise:
+
+            actions: {
+            actionA ({ commit }) {
+                return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    commit('someMutation')
+                    resolve()
+                }, 1000)
+                })
+            }
+            }
+
+        Now you can do:
+
+            store.dispatch('actionA').then(() => {
+            // ...
+            })
+            And also in another action:
+
+            actions: {
+            // ...
+            actionB ({ dispatch, commit }) {
+                return dispatch('actionA').then(() => {
+                commit('someOtherMutation')
+                })
+            }
+            }
+        Finally, if we make use of async / await (opens new window), we can compose our actions like this:
+
+        // assuming `getData()` and `getOtherData()` return Promises
+
+            actions: {
+            async actionA ({ commit }) {
+                commit('gotData', await getData())
+            },
+            async actionB ({ dispatch, commit }) {
+                await dispatch('actionA') // wait for `actionA` to finish
+                commit('gotOtherData', await getOtherData())
+            }
+            }
+
+        It's possible for a store.dispatch to trigger multiple action handlers in different modules. 
+        In such a case the returned value will be a Promise that resolves when all triggered handlers have been resolved.
+
+
+H_MAPPING:
+
+	This is like an short hand for writing the getters, actions or mutations 
+
+	this just calling the name oterwise the normal way will be creating an computed property which will return the value but 
+	mappings is much easier than computed properties 
+
+	
+	step1 : import 
+    
+			import {mapActions} from 'vuex';
+			import {mapGetters} from 'vuex';
+
+	step2 : now delete the computed value if you have written already and have this 
+			
+		export default {
+			
+			...mapGetters({
+				<getter names>
+			})
+			...mapActions({
+				<actions name>
+			})
+
+		}
+
+	Thats all you need No need to return or create any computed property to access them
+
+	Step 3: Even after writing these set of codes we will see no changes on the bowser that is it seems not working the reason is 
+		we need to install something to make this work 
+
+		// ... is a spread operator which comes under ES6 and our native bowser wont support ES6 it supports only JS and so 
+			we install babel-preset-stage2
+		// this library is an babel thing which will convert our ES6 code into JS and thus this is done in the background '
+			which browser understands and so now we can use this short hand 
+
+			npm install babel-preset-stage2 --save--dev 
+
+	Step 4: Inside the babelrc file just the line ["stage-2"] which do the magic 
+			your file should look like 
+
+		babelrc:
+			{
+				presets:[
+					["env",{"modules":false}],
+					["stage-2"]
+				]
+			}
+
+
