@@ -702,6 +702,62 @@ HTTP REQUEST :
 
         4. Link of vue-resource https://github.com/pagekit/vue-resource 
 
+    List of shortcut methods:
+
+        get(url, [config])
+        head(url, [config])
+        delete(url, [config])
+        jsonp(url, [config])
+        post(url, [body], [config])
+        put(url, [body], [config])
+        patch(url, [body], [config])
+
+
+Interceptors
+
+    Interceptors can be defined globally and are used for pre- and postprocessing of a request. 
+    If a request is sent using this.$http or this.$resource the current Vue instance is available 
+    as this in a interceptor callback.
+
+    Request processing
+        Vue.http.interceptors.push(function(request) {
+
+        // modify method
+        request.method = 'POST';
+
+        // modify headers
+        request.headers.set('X-CSRF-TOKEN', 'TOKEN');
+        request.headers.set('Authorization', 'Bearer TOKEN');
+
+        });
+
+    Request and Response processing
+        Vue.http.interceptors.push(function(request) {
+
+        // modify request
+        request.method = 'POST';
+
+        // return response callback
+        return function(response) {
+
+            // modify response
+            response.body = '...';
+
+        };
+        });
+
+    Return a Response and stop processing
+        Vue.http.interceptors.push(function(request) {
+
+        // modify request ...
+
+        // stop and return response
+        return request.respondWith(body, {
+            status: 404,
+            statusText: 'Not found'
+        });
+        });
+
 
 Mixins: 
     Block of code where we can use this in many different place to achieve DRY concept
@@ -870,6 +926,34 @@ Route Params :
                 }
             }
             <script>
+
+HINT FOR ROUTING : 
+
+    reacting to Params Changes
+    One thing to note when using routes with params is that when the user navigates from /user/foo to /user/bar, 
+    the same component instance will be reused. Since both routes render the same component, 
+    this is more efficient than destroying the old instance and then creating a new one. However, 
+    this also means that the lifecycle hooks of the component will not be called.
+
+    To react to params changes in the same component, you can simply watch the $route object:
+
+        const User = {
+        template: '...',
+        watch: {
+            $route(to, from) {
+            // react to route changes...
+            }
+        }
+        }
+        Or, use the beforeRouteUpdate navigation guard introduced in 2.2:
+
+        const User = {
+        template: '...',
+        beforeRouteUpdate(to, from, next) {
+            // react to route changes...
+            // don't forget to call next()
+        }
+        }
 
 
 -----------------------------------------------------------------------------------------------------------------------------

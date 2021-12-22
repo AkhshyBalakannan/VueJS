@@ -417,3 +417,82 @@ H_MAPPING:
 			}
 
 
+Vuex State on Page Refresh 
+    one can use vuex-persistedstate. This is a plugin for vuex to handle and store state between page refreshes.
+
+    Sample code:
+
+        import { Store } from 'vuex'
+        import createPersistedState from 'vuex-persistedstate'
+        import * as Cookies from 'js-cookie'
+
+        const store = new Store({
+        // ...
+        plugins: [
+            createPersistedState({
+            getState: (key) => Cookies.getJSON(key),
+            setState: (key, state) => Cookies.set(key, state, { expires: 3, secure: true })
+            })
+        ]
+        })
+
+    What we do here is simple:
+
+    you need to install js-cookie
+    on getState we try to load saved state from Cookies
+    on setState we save our state to Cookies
+    Docs and installation instructions: https://www.npmjs.com/package/vuex-persistedstate
+
+
+    When creating your VueX state, save it to session storage using the vuex-persistedstate plugin. 
+    In this way, the information will be lost when the browser is closed. 
+    Avoid use of cookies as these values will travel between client and server.
+
+        import Vue from 'vue'
+        import Vuex from 'vuex'
+        import createPersistedState from 'vuex-persistedstate'
+
+        Vue.use(Vuex);
+
+        export default new Vuex.Store({
+            plugins: [createPersistedState({
+                storage: window.sessionStorage,
+            })],
+            state: {
+                //....
+            }
+        });
+        Use sessionStorage.clear(); when user logs out manually.
+
+
+    Obfuscate Local Storage
+    If you need to use Local Storage (or you want to) but want to prevent attackers from easily inspecting the stored data, 
+    you can obfuscate it.
+
+    Important Obfuscating the Vuex store means to prevent attackers from easily gaining access to the data. 
+    This is not a secure way of storing sensitive data (like passwords, personal information, etc.), and 
+    always needs to be used in conjunction with some other authentication method of 
+    keeping the data (such as Firebase or your own server).
+
+
+        import { Store } from "vuex";
+        import createPersistedState from "vuex-persistedstate";
+        import SecureLS from "secure-ls";
+        var ls = new SecureLS({ isCompression: false });
+
+        // https://github.com/softvar/secure-ls
+
+        const store = new Store({
+        // ...
+        plugins: [
+            createPersistedState({
+            storage: {
+                getItem: (key) => ls.get(key),
+                setItem: (key, value) => ls.set(key, value),
+                removeItem: (key) => ls.remove(key),
+            },
+            }),
+        ],
+        });
+
+
